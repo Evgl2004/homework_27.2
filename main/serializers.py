@@ -3,8 +3,16 @@ from rest_framework import serializers
 from main.models import Course, Lesson
 
 
+class LessonSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Lesson
+        fields = '__all__'
+
+
 class CourseSerializer(serializers.ModelSerializer):
     count_lesson = serializers.SerializerMethodField(read_only=True)
+    lesson = LessonSerializer(many=True, read_only=True)
 
     class Meta:
         model = Course
@@ -14,10 +22,3 @@ class CourseSerializer(serializers.ModelSerializer):
         if instance.lesson.count():
             return instance.lesson.count()
         return 0
-
-
-class LessonSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Lesson
-        fields = '__all__'
