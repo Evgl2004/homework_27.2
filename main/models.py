@@ -22,6 +22,8 @@ class Lesson(models.Model):
     description = models.TextField(verbose_name='описание')
     link_to_video = models.CharField(max_length=250, **NULLABLE, verbose_name='ссылка на видео')
 
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lesson', verbose_name='курс')
+
     def __str__(self):
         return f'{self.title}'
 
