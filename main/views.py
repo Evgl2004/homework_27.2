@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from main.serializers import CourseSerializer, LessonSerializer,SubscriptionsUserOnCourseSerializer
 from main.models import Course, Lesson, SubscriptionsUserOnCourse
 from main.permissions import IsNotModerator, IsObjectOwner, IsObjectOwnerOrModerator, IsSubscriber
+from main.paginators import MainPaginator
 
 from users.services import is_moderator
 
@@ -12,6 +13,8 @@ from users.services import is_moderator
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+
+    pagination_class = MainPaginator
 
     # вернул видимость всех курсов, не только своих
     # def get_queryset(self):
@@ -54,6 +57,7 @@ class LessonCreateAPIView(generics.CreateAPIView):
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    pagination_class = MainPaginator
 
     permission_classes = [IsAuthenticated]
 
