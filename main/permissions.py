@@ -22,3 +22,7 @@ class IsObjectOwnerOrModerator(BasePermission):
         return request.user == obj.owner
 
 
+class IsSubscriber(BasePermission):
+
+    def has_permission(self, request, view):
+        return request.user == view.get_object().user
