@@ -96,7 +96,7 @@ class SubscriptionsUserOnCourseCreateAPIView(generics.CreateAPIView):
         course_pk = self.kwargs.get('course_pk')
 
         if SubscriptionsUserOnCourse.objects.filter(user=request.user.pk, course=course_pk).exists():
-            return Response({'Вы ранее уже подписаны на курс!'}, status=status.HTTP_201_CREATED)
+            return Response({'Вы ранее уже подписаны на курс!'}, status=status.HTTP_409_CONFLICT)
 
         serializer = self.get_serializer(data={'user': request.user.pk, 'course': course_pk, 'is_active': True})
         serializer.is_valid(raise_exception=True)
