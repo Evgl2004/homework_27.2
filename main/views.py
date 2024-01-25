@@ -12,9 +12,8 @@ from users.services import is_moderator
 
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
-    queryset = Course.objects.all()
-
     pagination_class = MainPaginator
+    queryset = Course.objects.all()
 
     # вернул видимость всех курсов, не только своих
     # def get_queryset(self):

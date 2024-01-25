@@ -17,6 +17,8 @@ class Course(models.Model):
         verbose_name = 'курс'
         verbose_name_plural = 'курсы'
 
+        ordering = ['pk']
+
 
 class Lesson(models.Model):
     title = models.CharField(max_length=150, verbose_name='название')
@@ -33,6 +35,8 @@ class Lesson(models.Model):
     class Meta:
         verbose_name = 'урок'
         verbose_name_plural = 'уроки'
+
+        ordering = ['pk']
 
 
 class SubscriptionsUserOnCourse(models.Model):
