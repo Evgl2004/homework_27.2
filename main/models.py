@@ -17,6 +17,8 @@ class Course(models.Model):
         verbose_name = 'курс'
         verbose_name_plural = 'курсы'
 
+        ordering = ['pk']
+
 
 class Lesson(models.Model):
     title = models.CharField(max_length=150, verbose_name='название')
@@ -33,3 +35,19 @@ class Lesson(models.Model):
     class Meta:
         verbose_name = 'урок'
         verbose_name_plural = 'уроки'
+
+        ordering = ['pk']
+
+
+class SubscriptionsUserOnCourse(models.Model):
+    course = models.ForeignKey(Course, models.CASCADE, verbose_name='курс', related_name='subscriptions')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE, verbose_name='пользователь', related_name='subscriptions')
+
+    is_active = models.BooleanField(default=False, verbose_name='активна')
+
+    def __str__(self):
+        return f'{self.user} - {self.course} - {self.is_active}'
+
+    class Meta:
+        verbose_name = 'подписка'
+        verbose_name_plural = 'подписки'

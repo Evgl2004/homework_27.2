@@ -1,23 +1,27 @@
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-from main.serializers import CourseSerializer, LessonSerializer
-from main.models import Course, Lesson
-from main.permissions import IsNotModerator, IsObjectOwner, IsObjectOwnerOrModerator
+from main.serializers import CourseSerializer, LessonSerializer,SubscriptionsUserOnCourseSerializer
+from main.models import Course, Lesson, SubscriptionsUserOnCourse
+from main.permissions import IsNotModerator, IsObjectOwner, IsObjectOwnerOrModerator, IsSubscriber
+from main.paginators import MainPaginator
 
 from users.services import is_moderator
 
 
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
+    pagination_class = MainPaginator
     queryset = Course.objects.all()
 
-    def get_queryset(self):
+    # вернул видимость всех курсов, не только своих
+    # def get_queryset(self):
 
-        if is_moderator(self.request.user):
-            return Course.objects.all()
-
-        return Course.objects.filter(owner=self.request.user)
+        # if is_moderator(self.request.user):
+        #     return Course.objects.all()
+        #
+        # return Course.objects.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
         course = serializer.save()
@@ -52,6 +56,7 @@ class LessonCreateAPIView(generics.CreateAPIView):
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    pagination_class = MainPaginator
 
     permission_classes = [IsAuthenticated]
 
@@ -81,3 +86,24 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
 
     permission_classes = [IsAuthenticated, IsObjectOwner]
+
+
+class SubscriptionsUserOnCourseCreateAPIView(generics.CreateAPIView):
+    serializer_class = SubscriptionsUserOnCourseSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        course_pk = self.kwargs.get('course_pk')
+
+        if SubscriptionsUserOnCourse.objects.filter(user=request.user.pk, course=course_pk).exists():
+            return Response({'Вы ранее уже подписаны на курс!'}, status=status.HTTP_409_CONFLICT)
+
+        serializer = self.get_serializer(data={'user': request.user.pk, 'course': course_pk, 'is_active': True})
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response({'Вы подписались на курс.'}, status=status.HTTP_201_CREATED)
+
+
+class SubscriptionsUserOnCourseDeleteAPIView(generics.DestroyAPIView):
+    queryset = SubscriptionsUserOnCourse.objects.all()
+    permission_classes = [IsAuthenticated, IsSubscriber]
