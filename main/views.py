@@ -11,6 +11,10 @@ from users.services import is_moderator
 
 
 class CourseViewSet(viewsets.ModelViewSet):
+    """
+        Контроллер точки входа набора CRUD для взаимодействия с моделью Курса.
+    """
+
     serializer_class = CourseSerializer
     pagination_class = MainPaginator
     queryset = Course.objects.all()
@@ -42,6 +46,9 @@ class CourseViewSet(viewsets.ModelViewSet):
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
+    """
+        Контроллер для создания элементов модели Уроки.
+    """
     serializer_class = LessonSerializer
 
     permission_classes = [IsAuthenticated, IsNotModerator]
@@ -54,6 +61,9 @@ class LessonCreateAPIView(generics.CreateAPIView):
 
 
 class LessonListAPIView(generics.ListAPIView):
+    """
+        Контроллер для получения списка всех доступных элементов модели Уроки.
+    """
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     pagination_class = MainPaginator
@@ -69,6 +79,9 @@ class LessonListAPIView(generics.ListAPIView):
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
+    """
+        Контроллер для получения детализации элемента модели Уроки.
+    """
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
 
@@ -76,6 +89,9 @@ class LessonRetrieveAPIView(generics.RetrieveAPIView):
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
+    """
+        Контроллер для обновления информации элемента модели Уроки.
+    """
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
 
@@ -83,12 +99,18 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
+    """
+        Контроллер для удаления элемента модели Уроки.
+    """
     queryset = Lesson.objects.all()
 
     permission_classes = [IsAuthenticated, IsObjectOwner]
 
 
 class SubscriptionsUserOnCourseCreateAPIView(generics.CreateAPIView):
+    """
+        Контроллер для создания элемента модели Подписки - действие 'Подписаться'
+    """
     serializer_class = SubscriptionsUserOnCourseSerializer
     permission_classes = [IsAuthenticated]
 
@@ -105,5 +127,8 @@ class SubscriptionsUserOnCourseCreateAPIView(generics.CreateAPIView):
 
 
 class SubscriptionsUserOnCourseDeleteAPIView(generics.DestroyAPIView):
+    """
+        Контроллер для удаления элемента модели Подписки - действие 'Отписаться'.
+    """
     queryset = SubscriptionsUserOnCourse.objects.all()
     permission_classes = [IsAuthenticated, IsSubscriber]
