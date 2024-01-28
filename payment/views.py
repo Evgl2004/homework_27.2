@@ -13,6 +13,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 
 class PaymentListAPIView(generics.ListAPIView):
+    """
+        Контроллер для взаимодействия с моделью платежа.
+        Отображает список всех платежей.
+    """
+
     serializer_class = PaymentSerializer
     queryset = Payment.objects.all()
 
@@ -24,6 +29,10 @@ class PaymentListAPIView(generics.ListAPIView):
 
 
 class PaymentCreateAPIView(generics.CreateAPIView):
+    """
+        Контроллер для создания платеж.
+        Платеж создаётся с интеграцией платежной системы stripe.
+    """
     serializer_class = PaymentSerializer
 
     permission_classes = [IsAuthenticated]
