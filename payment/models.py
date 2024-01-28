@@ -23,6 +23,12 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=15, decimal_places=2, verbose_name='сумма')
     pay_type = models.CharField(max_length=4, default=PAY_CARD, choices=PAY_TYPES, verbose_name='способ оплаты')
 
+    stripe_id = models.CharField(max_length=255, **NULLABLE, verbose_name='идентификатор оплаты')
+    stripe_status = models.CharField(max_length=10, **NULLABLE, verbose_name='статус оплаты')
+    stripe_url = models.CharField(max_length=500, **NULLABLE, verbose_name='ссылка оплаты')
+
+    is_paid = models.BooleanField(default=False, verbose_name='оплачено')
+
     def __str__(self):
         return f'{self.title}'
 
