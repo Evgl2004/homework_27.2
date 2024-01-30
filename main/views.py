@@ -6,6 +6,7 @@ from main.serializers import CourseSerializer, LessonSerializer,SubscriptionsUse
 from main.models import Course, Lesson, SubscriptionsUserOnCourse
 from main.permissions import IsNotModerator, IsObjectOwner, IsObjectOwnerOrModerator, IsSubscriber
 from main.paginators import MainPaginator
+from main.tasks import task_send_mail
 
 from users.services import is_moderator
 
@@ -31,6 +32,10 @@ class CourseViewSet(viewsets.ModelViewSet):
         course = serializer.save()
         course.owner = self.request.user
         course.save()
+
+    def perform_update(self, serializer, *args, **kwargs):
+        task_send_mail.delay(self.kwargs.get('pk'))
+        super().perform_update(serializer)
 
     def get_permissions(self):
         if self.action == 'create':
