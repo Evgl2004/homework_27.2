@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  db:
+    env_file:
+      - .env
+    image: postgres
+    environment:
+      - POSTGRES_DB=${DATABASES_NAME}
+      - POSTGRES_USER=${DATABASES_USER}
+      - POSTGRES_PASSWORD=${DATABASES_PASSWORD}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - pg_data:/var/lib/postgresql/data/pgdata
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    command: python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+    ports:
+      - '8001:8000'
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+   pg_data:
